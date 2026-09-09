@@ -36,8 +36,11 @@ class Compowrap (n :: Natural) (ts :: List (Type -> Type)) | ts -> n where
 instance Compowrap 2 [f,g] where
   askWrapUnwrap_ Proxy = (\u -> coerce u , \w -> coerce w)
 
-instance Compowrap 3 [f,g,h] where
-  askWrapUnwrap_ Proxy = (\u -> coerce u, \w -> coerce w)
+instance Functor f => Compowrap 3 [f,g,h] where
+  askWrapUnwrap_ Proxy = (Compose . fmap Compose, fmap getCompose . getCompose)
+
+instance (Functor f, Functor g) => Compowrap 4 [f,g,h,i] where
+  askWrapUnwrap_ Proxy = (Compose . fmap (Compose . fmap Compose), fmap (fmap getCompose . getCompose) . getCompose)
 
 askWrapUnwrap 
   :: 
