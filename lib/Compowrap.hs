@@ -38,12 +38,11 @@ instance (Functor f, Functor g) => Compowrappable 4 [f, g, h, i] tip (f (g (h (i
   _unwrap Proxy = fmap (fmap getCompose . getCompose) . getCompose
 
 type Compowrap :: Natural -> List (Type -> Type) -> Type
-data Compowrap n ts where
-  WrapUnwrap ::
-    { wrap :: forall tip whole. (Compowrappable n ts tip whole) => whole -> Compowrapped ts tip,
-      unwrap :: forall tip whole. (Compowrappable n ts tip whole) => Compowrapped ts tip -> whole
-    } ->
-    Compowrap n ts
+data Compowrap n ts
+  = WrapUnwrap
+  { wrap :: forall tip whole. (Compowrappable n ts tip whole) => whole -> Compowrapped ts tip,
+    unwrap :: forall tip whole. (Compowrappable n ts tip whole) => Compowrapped ts tip -> whole
+  }
 
 askWrapUnwrap ::
   forall {ts}.
