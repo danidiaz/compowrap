@@ -12,8 +12,8 @@ stuff' =
         & fmap not
         & unwrap
 
--- works even with signature.
--- I had to add the 'wrapped' type variable to 'Compowrappable' for this to work.
+-- works even without signature.
+-- I had to add the 'wrapped' type variable to 'Compowrappable' for this to work without signature.
 -- stuff'' :: Either Int (Either Int (Either Int String))
 stuff'' =
   let WrapUnwrap {wrap, unwrap} = askWrapUnwrap 3
@@ -28,9 +28,6 @@ atuff' =
         & fmap not
         & unwrap
 
--- works even with signature.
--- I had to add the 'wrapped' type variable to 'Compowrappable' for this to work.
--- astuff'' :: Either Int (Either Int (Either Int String))
 atuff'' =
   let WrapUnwrap {wrap, unwrap} = askWrapUnwrap 3
    in unwrap $ show <$> ((&&) <$> wrap atuff <*> wrap atuff)
