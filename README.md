@@ -1,6 +1,6 @@
 # compozy
 
-Utility for inserting [`Compose`](https://hackage-content.haskell.org/package/base-4.22.0.0/docs/Data-Functor-Compose.html#t:Compose) newtypes into deeply nested functor applications in order to handle them as a singlel functor. The level of nesting is specified using a type-level `Natural`.
+Utility for inserting [`Compose`](https://hackage-content.haskell.org/package/base-4.22.0.0/docs/Data-Functor-Compose.html#t:Compose) newtypes into deeply nested functor applications in order to handle them as a single functor. The level of nesting is specified using a type-level `Natural`.
 
 ```
 stuff, stuff' :: Either Int (Either Int (Either Int Bool))
