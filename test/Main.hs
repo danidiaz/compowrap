@@ -12,6 +12,7 @@ stuff' =
         & fmap not
         & unwrap
 
+-- removing this signature causes a compilation error. But should it work without it?
 stuff'' :: Either Int (Either Int (Either Int String))
 stuff'' =
   let WrapUnwrap {wrap, unwrap} = askWrapUnwrap 3
