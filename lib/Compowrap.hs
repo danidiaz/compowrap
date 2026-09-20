@@ -42,8 +42,8 @@ instance (Functor f, Functor g) => Compowrappable 4 [f, g, h, i] tip (f (g (h (i
 type Compowrap :: Natural -> List (Type -> Type) -> Type
 data Compowrap n ts
   = WrapUnwrap
-  { wrap :: forall tip unwrapped wrapped. (Compowrappable n ts tip unwrapped wrapped) => unwrapped -> wrapped,
-    unwrap :: forall tip unwrapped wrapped. (Compowrappable n ts tip unwrapped wrapped) => wrapped -> unwrapped
+  { wrap :: forall tip {unwrapped} {wrapped}. (Compowrappable n ts tip unwrapped wrapped) => unwrapped -> wrapped,
+    unwrap :: forall tip {unwrapped} {wrapped}. (Compowrappable n ts tip unwrapped wrapped) => wrapped -> unwrapped
   }
 
 askWrapUnwrap ::
