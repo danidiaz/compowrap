@@ -6,10 +6,9 @@
 {-# LANGUAGE TypeAbstractions #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Compowrap (Compowrap (..), askWrapUnwrap, someFunc) where
+module Compowrap (Compowrappable (..)) where
 
 import Data.Functor.Compose
-import Data.Functor.Identity
 import Data.Proxy
 import GHC.TypeLits (Natural)
 import Data.List
@@ -22,48 +21,45 @@ import Data.Coerce
 --         tip 
 --         everything
 --         | ts -> n, n everything -> ts tip, n ts tip -> everything where
---     type Compowrapped n ts tip everything
+--     type Compowrap n ts tip everything
 --   askWrapUnwrap_ 
 --     :: 
 --       Proxy n ->
 --       forall tip . 
---       (Compounwrapped ts tip -> Compowrapped ts tip,
---       Compowrapped ts tip -> Compounwrapped ts tip)
+--       (Compounwrapped ts tip -> Compowrap ts tip,
+--       Compowrap ts tip -> Compounwrapped ts tip)
 
-type family Compowrapped (ts :: List (Type -> Type)) :: Type -> Type where
-  Compowrapped [f, g] = Compose f g 
-  Compowrapped (f : rest) = Compose f (Compowrapped rest)
+type family Compowrap (ts :: List (Type -> Type)) :: Type -> Type where
+  Compowrap [f, g] = Compose f g 
+  Compowrap (f : rest) = Compose f (Compowrap rest)
 
 -- type family Compounwrapped (ts :: List (Type -> Type)) (tip :: Type) :: Type where
 --   Compounwrapped [f, g] tip = f (g tip)
 --   Compounwrapped (f : rest) tip = f (Compounwrapped rest tip)
 
-type Compowrap :: Natural -> List (Type -> Type) -> Type -> Type -> Constraint
-class Compowrap n ts tip whole | ts -> n, n whole -> ts tip, ts tip -> whole where
+type Compowrappable :: Natural -> List (Type -> Type) -> Type -> Type -> Constraint
+class Compowrappable n ts tip whole | ts -> n, n whole -> ts tip, ts tip -> whole where
    
   askWrapUnwrap_ 
     :: 
       Proxy n ->
-      (whole -> Compowrapped ts tip,
-      Compowrapped ts tip -> whole)
+      (whole -> Compowrap ts tip,
+      Compowrap ts tip -> whole)
 
-instance Compowrap 2 [f,g] tip (f (g tip)) where
+instance Compowrappable 2 [f,g] tip (f (g tip)) where
   askWrapUnwrap_ Proxy = (\u -> coerce u , \w -> coerce w)
 
-instance Functor f => Compowrap 3 [f,g,h] tip (f (g (h tip))) where
+instance Functor f => Compowrappable 3 [f,g,h] tip (f (g (h tip))) where
   askWrapUnwrap_ Proxy = (Compose . fmap Compose, fmap getCompose . getCompose)
 
-instance (Functor f, Functor g) => Compowrap 4 [f,g,h,i] tip (f (g (h (i tip)))) where
+instance (Functor f, Functor g) => Compowrappable 4 [f,g,h,i] tip (f (g (h (i tip)))) where
   askWrapUnwrap_ Proxy = (Compose . fmap (Compose . fmap Compose), fmap (fmap getCompose . getCompose) . getCompose)
 
 -- askWrapUnwrap 
 --   :: 
 --      forall {ts} {tip}. 
 --      forall n -> 
---      (Compowrap n ts) =>
---       (Compounwrapped ts tip -> Compowrapped ts tip,
---       Compowrapped ts tip -> Compounwrapped ts tip)
+--      (Compowrappable n ts) =>
+--       (Compounwrapped ts tip -> Compowrap ts tip,
+--       Compowrap ts tip -> Compounwrapped ts tip)
 -- askWrapUnwrap tn = askWrapUnwrap_ @_ @ts (Proxy @tn)
-
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
