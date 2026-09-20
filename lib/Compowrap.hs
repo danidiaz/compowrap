@@ -39,22 +39,20 @@ instance (Functor f, Functor g) => Compowrappable 4 [f, g, h, i] tip (f (g (h (i
   _wrap Proxy = Compose . fmap (Compose . fmap Compose)
   _unwrap Proxy = fmap (fmap getCompose . getCompose) . getCompose
 
--- | Because of the phantom @ts@ parameter, each value of 'Compowrap' is valid
--- for only one type of functor nesting. This is done to help guide the type
--- inference by connecting the wrapped and unwrapped values.  
-type Compowrap :: Natural -> List (Type -> Type) -> Type
-data Compowrap n ts
+-- | Formerly this type also had a phantom @ts@ parameter that was supposed to
+-- help guide inference, but it seems not to be necessary?
+type Compowrap :: Natural -> Type
+data Compowrap n
   = WrapUnwrap
-  { wrap :: forall tip {unwrapped} {wrapped}. (Compowrappable n ts tip unwrapped wrapped) => unwrapped -> wrapped,
-    unwrap :: forall tip {unwrapped} {wrapped}. (Compowrappable n ts tip unwrapped wrapped) => wrapped -> unwrapped
+  { wrap :: forall {ts} tip {unwrapped} {wrapped}. (Compowrappable n ts tip unwrapped wrapped) => unwrapped -> wrapped,
+    unwrap :: forall {ts} tip {unwrapped} {wrapped}. (Compowrappable n ts tip unwrapped wrapped) => wrapped -> unwrapped
   }
 
 askWrapUnwrap ::
-  forall {ts}.
   forall n ->
-  Compowrap n ts
+  Compowrap n
 askWrapUnwrap tn =
   WrapUnwrap
-    { wrap = _wrap @_ @ts (Proxy @tn),
-      unwrap = _unwrap @_ @ts (Proxy @tn)
+    { wrap = _wrap @_ (Proxy @tn),
+      unwrap = _unwrap @_ (Proxy @tn)
     }
