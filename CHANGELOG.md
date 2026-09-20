@@ -1,4 +1,4 @@
-# Revision history for compozy
+# Revision history for compowrap
 
 ## 0.1.0.0 -- YYYY-mm-dd
 
