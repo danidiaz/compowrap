@@ -3,7 +3,7 @@ module Main (main) where
 import Compowrap
 import Data.Function ((&))
 
-stuff, stuff' :: Either Int (Either Int (Either Int Bool))
+stuff, stuff':: Either Int (Either Int (Either Int Bool))
 stuff = Right (Right (Right False))
 stuff' =
   let WrapUnwrap {wrap, unwrap} = askWrapUnwrap 3
@@ -17,7 +17,10 @@ stuff' =
 -- stuff'' :: Either Int (Either Int (Either Int String))
 stuff'' =
   let WrapUnwrap {wrap, unwrap} = askWrapUnwrap 3
-   in unwrap $ show <$> ((&&) <$> wrap stuff <*> wrap stuff)
+   in unwrap $ (\a b -> show $ a && b) <$> wrap stuff <*> wrap stuff
+
+stuff''' =
+  nliftA2 3 (\a b -> show $ a && b) stuff stuff
 
 atuff, atuff' :: Either String (Either Float (Either Int Bool))
 atuff = Right (Right (Right False))
@@ -30,7 +33,10 @@ atuff' =
 
 atuff'' =
   let WrapUnwrap {wrap, unwrap} = askWrapUnwrap 3
-   in unwrap $ show <$> ((&&) <$> wrap atuff <*> wrap atuff)
+   in unwrap $ (\a b -> show $ a && b) <$> wrap atuff <*> wrap atuff
+
+atuff''' =
+  nliftA2 3 (\a b -> show $ a && b) atuff atuff'
 
 main :: IO ()
 main = do
